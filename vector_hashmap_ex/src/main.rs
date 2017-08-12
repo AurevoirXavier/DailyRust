@@ -23,7 +23,7 @@ fn main() {
         sum += *element;
     }
 
-    println!("average: {}", (sum as f64) / (len as f64),);    
+    println!("average: {}", (sum as f64) / (len as f64),);
 
     v.sort();
 
@@ -56,4 +56,72 @@ fn main() {
     }
 
     println!("most: {:?}", most);
+
+    let text = String::from("Ask quiet school my");
+
+    let mut pig_latin = String::new();
+
+    for word in text.to_lowercase().split_whitespace() {
+        pig_latin.push(' ');
+
+        match &word[..1] {
+            "a" | "e" | "i" | "o" | "u" => {
+                let temp = format!("{}{}", word, "hay");
+                pig_latin += &temp;
+            }
+            "q" => if &word[1..2] == "u" {
+                let temp = format!("{}{}", &word[2..], "quay");
+                pig_latin += &temp;
+            } else {
+                pig_latin += word;
+            },
+            _ => {
+                let mut pivot = ' ';
+
+                for letter in word.chars() {
+                    match letter {
+                        'a' => {
+                            pivot = letter;
+                            break;
+                        }
+                        'e' => {
+                            pivot = letter;
+                            break;
+                        }
+                        'i' => {
+                            pivot = letter;
+                            break;
+                        }
+                        'o' => {
+                            pivot = letter;
+                            break;
+                        }
+                        'u' => {
+                            pivot = letter;
+                            break;
+                        }
+                        _ => continue,
+                    }
+                }
+
+                if pivot != ' ' {
+                    let (head, tail) = word.split_at(word.find(pivot).unwrap());
+
+                    let temp = format!("{}{}{}", tail, head, "ay");
+
+                    pig_latin += &temp;
+                } else if word.ends_with('y') {
+                    let (head, tail) = word.split_at(word.len() - 1);
+
+                    let temp = format!("{}{}{}", tail, head, "ay");
+
+                    pig_latin += &temp;
+                } else {
+                    pig_latin += word;
+                }
+            }
+        }
+    }
+
+    println!("Pig Latin:{}", pig_latin);
 }
