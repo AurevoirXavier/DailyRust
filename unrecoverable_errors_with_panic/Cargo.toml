@@ -1,0 +1,9 @@
+[package]
+name = "unrecoverable_errors_with_panic"
+version = "0.1.0"
+authors = ["AurevoirXavier <c.estlavie@icloud.com>"]
+
+[dependencies]
+
+[profile.release]
+panic = 'abort'
