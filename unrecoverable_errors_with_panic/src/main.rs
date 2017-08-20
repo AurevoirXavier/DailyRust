@@ -27,7 +27,7 @@ fn main() {
     //     }
     // };
 
-    // let f = File::open("hello.txt").expect("Failed to open hellow.txt");
+    // let f = File::open("hello.txt").expect("Failed to open hello.txt");
 
     let f = File::open("hello.txt")?;
 }
