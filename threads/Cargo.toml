@@ -1,6 +1,0 @@
-[package]
-name = "threads"
-version = "0.1.0"
-authors = ["AurevoirXavier <c.estlavie@icloud.com>"]
-
-[dependencies]
