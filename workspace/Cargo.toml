@@ -1,8 +1,0 @@
-[package]
-name = "workspace"
-version = "0.1.0"
-authors = ["AurevoirXavier <c.estlavie@icloud.com>"]
-
-[dependencies]
-add-one = { path = "add-one" }
-add-two = { path = "add-two" }
