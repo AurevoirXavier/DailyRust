@@ -1,0 +1,4 @@
+[root]
+name = "unsafe_rust"
+version = "0.1.0"
+
