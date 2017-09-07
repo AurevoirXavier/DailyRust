@@ -1,5 +1,5 @@
 fn main() {
-    let mut v: Vec<u32> = vec![8, 4, 6, 2, 10];
+    let mut v: Vec<u32> = vec![5, 2, 4, 6, 1, 3];
 
     insertion_sort(&mut v);
 
@@ -7,15 +7,24 @@ fn main() {
 }
 
 fn insertion_sort(ary: &mut Vec<u32>) {
-    let len = ary.len();
+    for i in 1..ary.len() {
+        //        let key = ary[i];
 
-    for i in 0..len {
-        for j in i..len {
-            if ary[j] > ary[i] {
-                let tmp = ary[j];
+        //        let mut j = i;
 
-                ary[j] = ary[i];
-                ary[i] = tmp;
+        //        while j > 0 && ary[j - 1] > key {
+        //            ary[j] = ary[j - 1];
+
+        //            ary[j - 1] = key;
+
+        //            j -= 1;
+        //        }
+
+        for j in (0..i).rev() {
+            if ary[j] > ary[j + 1] {
+                ary.swap(j, j + 1);
+            } else {
+                break;
             }
         }
     }
