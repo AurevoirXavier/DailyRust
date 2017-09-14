@@ -35,7 +35,7 @@ gap = 1
 
 fn shell_sort(ary: &mut Vec<u32>) {
     let len = ary.len();
-    let mut gap = ary.len() / 2;
+    let mut gap = len / 2;
 
     while gap > 0 {
         for i in gap..len {
