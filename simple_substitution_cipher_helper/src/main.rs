@@ -25,10 +25,18 @@ impl Cipher {
     }
 
     fn encode(&self, string: &str) -> String {
-        string.chars().map(|c| self.map_encode.get(&c).unwrap()).collect()
+        if string.is_empty() { return String::from(""); }
+
+        string.chars().map(|c| {
+            if c.is_alphabetic() { self.map_encode.get(&c).unwrap() } else { c }
+        }).collect()
     }
 
     fn decode(&self, string: &str) -> String {
-        string.chars().map(|c| self.map_decode.get(&c).unwrap()).collect()
+        if string.is_empty() { return String::from(""); }
+
+        string.chars().map(|c| {
+            if c.is_alphabetic() { self.map_decode.get(&c).unwrap() } else { c }
+        }).collect()
     }
 }
