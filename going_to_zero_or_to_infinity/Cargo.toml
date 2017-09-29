@@ -1,0 +1,9 @@
+[package]
+name = "going_to_zero_or_to_infinity"
+version = "0.1.0"
+authors = ["AurevoirXavier <c.estlavie@icloud.com>"]
+
+[dependencies]
+
+[profile.release]
+opt-level = 3
