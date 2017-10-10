@@ -72,13 +72,13 @@ fn going(n: i32) -> f64 {
 //}
 //
 //fn going(n: i32) -> f64 {
-//    let mut nominator = BigDecimal::new(0.1, 1);
+//    let mut numerator = BigDecimal::new(0.1, 1);
 //    let mut denominator = BigDecimal::new(0.1, 1);
 //
 //    for x in 2..n + 1 {
 //        denominator = denominator.mul(x);
-//        nominator = nominator.pls(&denominator);
+//        numerator = numerator.pls(&denominator);
 //    }
 //
-//    return nominator.div(&denominator);
+//    return numerator.div(&denominator);
 //}
