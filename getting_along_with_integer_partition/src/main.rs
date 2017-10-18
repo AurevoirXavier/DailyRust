@@ -1,12 +1,12 @@
 fn main() {
-    println!("{}", part(39));
+    println!("{}", part(5));
 }
 
 fn part(n: i64) -> String {
     let mut v = Vec::new();
-    let mut p = Vec::with_capacity(50);
+    let mut p = Vec::new();
 
-    p.resize(50, 0i64);
+    p.resize(n as usize, 0i64);
 
     partition(n, n, 0, &mut v, &mut p);
 
