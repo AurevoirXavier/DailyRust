@@ -1,0 +1,4 @@
+"/Users/aurevoirxavier/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/173.3188.25/CLion 2017.3 EAP.app/Contents/bin/cmake/bin/cmake" -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /Users/aurevoirxavier/Documents/Program/Rust/debugging
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /Users/aurevoirxavier/Documents/Program/Rust/debugging/cmake-build-debug
