@@ -1,4 +1,0 @@
-Options: 
-CMake: 3.9.4@/Users/aurevoirxavier/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/173.3188.25/CLion 2017.3 EAP.app/Contents/bin/cmake/bin/cmake
-
-Options:
