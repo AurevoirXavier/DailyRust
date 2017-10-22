@@ -1,2 +1,0 @@
-/Users/aurevoirxavier/Documents/Program/Rust/molecule_to_atoms/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/Users/aurevoirxavier/Documents/Program/Rust/molecule_to_atoms/cmake-build-debug/CMakeFiles/edit_cache.dir
