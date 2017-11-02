@@ -36,7 +36,7 @@ impl Data2D {
         return result.join("\r\n");
     }
 
-    fn paint(&mut self, code: Vec<char>, mut bracket_index: Vec<usize>, mut x: usize, mut y: usize) -> String {
+    fn paint(&mut self, code: Vec<char>, mut x: usize, mut y: usize) -> String {
         if code.is_empty() || self.iterations == 0 { return self.grid_to_string(); }
 
         let mut times: usize = 0;
@@ -44,6 +44,7 @@ impl Data2D {
         let mut pass = false;
         let mut ignore_bracket = false;
         let mut jump = false;
+        let mut bracket_index: Vec<usize> = Vec::new();
 
         loop {
             if times == self.iterations || index == code.len() { return self.grid_to_string(); }
@@ -110,5 +111,5 @@ fn interpreter(code: &str, iterations: usize, width: usize, height: usize) -> St
     data.paint(code.chars().filter(|c| match *c {
         'n' | 's' | 'w' | 'e' | '*' | '[' | ']' => true,
         _ => false
-    }).collect::<Vec<char>>(), Vec::new(), 0, 0)
+    }).collect::<Vec<char>>(), 0, 0)
 }

@@ -1,5 +1,5 @@
 fn main() {
-    println!("{}", last_digit(&vec![123232, 694022, 140249]));
+    println!("{}", last_digit(&vec![2, 7, 11, 35]));
 }
 
 fn mod_off(num: i32, mod_num: i32) -> i32 {
