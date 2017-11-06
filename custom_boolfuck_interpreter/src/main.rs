@@ -18,11 +18,12 @@ fn boolfuck(code: &str, input: Vec<u8>) -> Vec<u8> {
 
     while cp < code.len() {
         match code[cp] {
-            b'+' => {
-                let t = tape.entry(tp).or_insert(0);
+            b'+' =>
+                {
+                    let t = tape.entry(tp).or_insert(0);
 
-                *t = if *t == 0 { 1 } else { 0 }
-            }
+                    *t = if *t == 0 { 1 } else { 0 }
+                }
             b',' => { input.next().map(|x| tape.insert(tp, x)); }
             b';' => output.push(*tape.get(&tp).unwrap_or(&0)),
             b'<' => tp -= 1,
@@ -31,6 +32,7 @@ fn boolfuck(code: &str, input: Vec<u8>) -> Vec<u8> {
             b']' => cp = stack.pop().unwrap().wrapping_sub(1),
             _ => (),
         }
+
         cp = cp.wrapping_add(1);
     }
 
