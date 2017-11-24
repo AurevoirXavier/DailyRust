@@ -1,6 +1,0 @@
-[package]
-name = "tiny_three_pass_compiler"
-version = "0.1.0"
-authors = ["AurevoirXavier <c.estlavie@icloud.com>"]
-
-[dependencies]

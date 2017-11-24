@@ -1,6 +1,0 @@
-[package]
-name = "last_digit_of_a_huge_number"
-version = "0.1.0"
-authors = ["AurevoirXavier <c.estlavie@icloud.com>"]
-
-[dependencies]

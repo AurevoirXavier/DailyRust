@@ -1,6 +1,0 @@
-[package]
-name = "custom_boolfuck_interpreter"
-version = "0.1.0"
-authors = ["AurevoirXavier <c.estlavie@icloud.com>"]
-
-[dependencies]

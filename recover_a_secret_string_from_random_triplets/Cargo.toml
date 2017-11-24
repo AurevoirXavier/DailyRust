@@ -1,6 +1,0 @@
-[package]
-name = "recover_a_secret_string_from_random_triplets"
-version = "0.1.0"
-authors = ["AurevoirXavier <c.estlavie@icloud.com>"]
-
-[dependencies]

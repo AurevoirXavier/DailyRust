@@ -1,6 +1,0 @@
-[package]
-name = "the_twelve_days_of_christmas"
-version = "0.1.0"
-authors = ["AurevoirXavier <c.estlavie@icloud.com>"]
-
-[dependencies]

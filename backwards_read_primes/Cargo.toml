@@ -1,6 +1,0 @@
-[package]
-name = "backwards_read_primes"
-version = "0.1.0"
-authors = ["AurevoirXavier <c.estlavie@icloud.com>"]
-
-[dependencies]
