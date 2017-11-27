@@ -1,0 +1,6 @@
+[package]
+name = "all-the-place-for-patterns"
+version = "0.1.0"
+authors = ["AurevoirXavier <c.estlavie@icloud.com>"]
+
+[dependencies]
