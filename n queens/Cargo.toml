@@ -4,6 +4,7 @@ version = "0.1.0"
 authors = ["Aurevoir Xavier <c.estlavie@icloud.com>"]
 
 [dependencies]
+time = "*"
 
 [profile.dev]
 opt-level = 3

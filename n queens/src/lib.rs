@@ -1,7 +1,9 @@
 #![feature(test)]
 extern crate test;
+extern crate time;
 
 use test::Bencher;
+use time::PreciseTime;
 
 #[cfg(test)]
 mod tests {
@@ -10,11 +12,13 @@ mod tests {
 
     #[test]
     fn it_works() {
+        let start = PreciseTime::now();
         assert_eq!(2279184, dfs_5(0, 0, 0, 0));
+        println!("Solved in {}ms.", start.to(PreciseTime::now()).num_milliseconds());
     }
 
     #[bench]
-    fn bench_add_two(b: &mut Bencher) {
+    fn bench_dfs_5(b: &mut Bencher) {
         b.iter(|| {
             let n = test::black_box(0);
             dfs_5(n, 0, 0, 0)
