@@ -100,6 +100,9 @@ impl List {
     }
 }
 
+static LANGUAGE: &'static str = "RUST";
+const  THRESHOLD: i32 = 10;
+
 fn main() {
     let point = Point { x: 0.3, y: 0.4 };
     println!("point coordinates: ({}, {})", point.x, point.y);
@@ -151,4 +154,8 @@ fn main() {
 
     println!("linked list has length: {}", list.len());
     println!("{}", list.stringify());
+
+    println!("This is {}", LANGUAGE);
+    println!("The threshold is {}", THRESHOLD);
+//    THRESHOLD = 5;
 }
