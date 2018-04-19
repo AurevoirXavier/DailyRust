@@ -10,7 +10,7 @@ struct Point {
 
 impl Point {
     fn square(&self, k: f32) -> (Point, f32, f32) {
-        let Point { x: x, y: y } = self;
+        let Point { x, y } = self;
         let (x, y) = (x + k, y + y);
 
         (
@@ -21,7 +21,6 @@ impl Point {
     }
 }
 
-#[allow(dead_code)]
 struct Rectangle {
     p1: Point,
     p2: Point,
@@ -35,6 +34,24 @@ impl Rectangle {
         } = self;
 
         (x1 - x2).abs() * (y1 - y2).abs()
+    }
+}
+
+enum WebEvent {
+    PageLoad,
+    PageUnload,
+    KeyPress(char),
+    Paste(String),
+    Click { x: i64, y: i64 },
+}
+
+fn inspect(event: WebEvent) {
+    match event {
+        WebEvent::PageLoad => println!("page loaded"),
+        WebEvent::PageUnload => println!("page unloaded"),
+        WebEvent::KeyPress(c) => println!("pressed '{}'.", c),
+        WebEvent::Paste(s) => println!("pasted \"{}\".", s),
+        WebEvent::Click { x, y } => println!("clicked at x={}, y={}.", x, y)
     }
 }
 
@@ -62,4 +79,16 @@ fn main() {
     println!("{}", rectangle.rect_area());
 
     println!("{:?}", point.square(0.7));
+
+    let pressed = WebEvent::KeyPress('x');
+    let pasted = WebEvent::Paste("my text".to_owned());
+    let click = WebEvent::Click { x: 20, y: 80 };
+    let load = WebEvent::PageLoad;
+    let unload = WebEvent::PageUnload;
+
+    inspect(pressed);
+    inspect(pasted);
+    inspect(click);
+    inspect(load);
+    inspect(unload);
 }
