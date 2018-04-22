@@ -18,6 +18,24 @@ fn function() {
     println!("I'm a function!");
 }
 
+fn create_fn() -> Box<Fn()> {
+    let text = "Fn".to_owned();
+
+    Box::new(move || println!("This is a: {}", text))
+}
+
+fn create_fn_mut() -> Box<FnMut()> {
+    let text = "FnMut".to_owned();
+
+    Box::new(move || println!("This is a: {}", text))
+}
+
+//fn create_fn_once() -> Box<FnOnce()> {
+//    let text = "FnOnce".to_owned();
+//
+//    Box::new(move || println!("This is a: {}", text))
+//}
+
 
 fn main() {
     let add_one = |x| x + 1;
@@ -128,5 +146,13 @@ fn main() {
     let closure = || println!("I'm a closure!");
 
     call_me(closure);
-    call_me(function)
+    call_me(function);
+
+    let fn_plain  = create_fn();
+    let mut fn_mut = create_fn_mut();
+//    let fn_once = create_fn_once();
+
+    fn_plain();
+    fn_mut();
+//    fn_once();
 }
