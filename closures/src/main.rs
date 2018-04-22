@@ -2,8 +2,20 @@ fn apply<F>(f: F) where F: FnOnce() {
     f();
 }
 
-fn apply_to_3<F>(f: F) -> i32 where F:Fn(i32) -> i32 {
+fn apply_to_3<F>(f: F) -> i32 where F: Fn(i32) -> i32 {
     f(3)
+}
+
+fn apply_type_anonymity<F>(f: F) where F: Fn() {
+    f();
+}
+
+fn call_me<F: Fn()>(f: F) {
+    f()
+}
+
+fn function() {
+    println!("I'm a function!");
 }
 
 
@@ -84,7 +96,7 @@ fn main() {
     println!("{}", contains(&4));
 //    println!("There're {} elements in vec", haystack.len());
 
-    let bigger = |a: u32, b:u32| if a > b { a } else { b };
+    let bigger = |a: u32, b: u32| if a > b { a } else { b };
 
     println!("{}", bigger(1, 2));
 
@@ -107,4 +119,14 @@ fn main() {
     let double = |x| 2 * x;
 
     println!("3 doubled: {}", apply_to_3(double));
+
+    let x = 7;
+    let print = || println!("{}", x);
+
+    apply_type_anonymity(print);
+
+    let closure = || println!("I'm a closure!");
+
+    call_me(closure);
+    call_me(function)
 }
