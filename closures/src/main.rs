@@ -1,3 +1,12 @@
+fn apply<F>(f: F) where F: FnOnce() {
+    f();
+}
+
+fn apply_to_3<F>(f: F) -> i32 where F:Fn(i32) -> i32 {
+    f(3)
+}
+
+
 fn main() {
     let add_one = |x| x + 1;
 
@@ -37,4 +46,65 @@ fn main() {
     let answer = call_with_one(|x| x + 2);
 
     assert_eq!(3, answer);
+
+    let color = "green";
+    let print = || println!("`color`: {}", color);
+
+    print();
+    print();
+
+    let mut count = 0;
+    let mut inc = || {
+        count += 1;
+
+        println!("`count`: {}", count);
+    };
+
+    inc();
+    inc();
+
+    use std::mem;
+
+//    let not_non_copy = 3;
+    let movable = Box::new(3);
+    let consume = || {
+        println!("`movable`: {:?}", movable);
+
+        mem::drop(movable);
+//        mem::drop(not_non_copy);
+    };
+
+    consume();
+//    consume();
+
+    let haystack = vec![1, 2, 3];
+    let contains = move |needle| haystack.contains(needle);
+
+    println!("{}", contains(&1));
+    println!("{}", contains(&4));
+//    println!("There're {} elements in vec", haystack.len());
+
+    let bigger = |a: u32, b:u32| if a > b { a } else { b };
+
+    println!("{}", bigger(1, 2));
+
+    let greeting = "hello";
+    let mut farewell = "goodbye".to_owned();
+
+    let diary = || {
+        println!("I said {}.", greeting);
+
+        farewell.push_str("!!!");
+
+        println!("Then I screamed {}.", farewell);
+        println!("Now I can sleep. zzzzz");
+
+        mem::drop(farewell);
+    };
+
+    apply(diary);
+
+    let double = |x| 2 * x;
+
+    println!("3 doubled: {}", apply_to_3(double));
 }
