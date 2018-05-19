@@ -3,7 +3,7 @@ macro_rules! four {
 }
 
 macro_rules! gibberish {
-    (4 fn ['spang "whammo"] @_@) => { 1 };
+    (4 fn ['spang "whammo"] @_@) => {1};
 }
 
 macro_rules! times_five {
