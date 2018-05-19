@@ -15,45 +15,25 @@ macro_rules! multiply_add {
 }
 
 macro_rules! vec_strs {
-    (
-        $(
-            ($a:expr, $b:expr)
-        ),
-        *
-    ) => {
-        {
-            let mut v = Vec::new();
+    ($(($a:expr, $b:expr)),*) => {{
+        let mut v = Vec::new();
 
-            $(
-                v.push(format!("{}", $b));
-            )*
+        $(v.push(format!("{}", $b));)*
 
-            v
-        }
-    };
+        v
+    }};
 
-    (
-        $(
-            $element:expr
-        ),
-        *
-    ) => {
-        {
-            let mut v = Vec::new();
+    ($($element:expr),*) => {{
+        let mut v = Vec::new();
 
-            $(
-                v.push(format!("{}", $element));
-            )*
+        $(v.push(format!("{}", $element));)*
 
-            v
-        }
-    };
+        v
+    }};
 }
 
 macro_rules! capture_expr_then_stringify {
-    ($e:expr) => {
-        stringify!($e)
-    };
+    ($e:expr) => {stringify!($e)};
 }
 
 fn main() {
