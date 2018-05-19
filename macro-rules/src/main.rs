@@ -56,6 +56,15 @@ macro_rules! what_is {
     ($($tts:tt)*) => {concat!("something else (", stringify!($($tts)*), ")")};
 }
 
+macro_rules! using_a {
+    ($a:ident, $e:expr) => {
+        {
+            let $a = 42;
+            $e
+        }
+    }
+}
+
 fn main() {
     let x = four!();
     println!("{}", x);
@@ -98,4 +107,7 @@ fn main() {
         capture_then_what_is!(#[no_mangle]),
         capture_then_what_is!(#[inline]),
     );
+
+    let x = using_a!(a, a / 10);
+    println!("{}", x);
 }
