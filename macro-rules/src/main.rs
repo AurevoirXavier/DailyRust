@@ -50,6 +50,12 @@ macro_rules! vec_strs {
     };
 }
 
+macro_rules! capture_expr_then_stringify {
+    ($e:expr) => {
+        stringify!($e)
+    };
+}
+
 fn main() {
     let x = four!();
     println!("{}", x);
@@ -68,5 +74,7 @@ fn main() {
 
     let x = vec_strs!((1, 2), (3, 4));
     println!("{:?}", x);
-}
 
+    println!("{:?}", stringify!(dummy(2 * (1 + (3)))));
+    println!("{:?}", capture_expr_then_stringify!(dummy(2 * (1 + (3)))));
+}
