@@ -1,3 +1,6 @@
+#![feature(trace_macros)]
+#![feature(log_syntax)]
+
 macro_rules! four {
     () => {1 + 3};
 }
@@ -76,6 +79,31 @@ macro_rules! call_with_ident {
     ($c:ident($i:ident)) => {$c!($i)};
 }
 
+macro_rules! double_method {
+    ($self:ident, $body:expr) => {
+        fn double(mut $self) -> Dummy { $body }
+    };
+}
+
+struct Dummy(i32);
+
+impl Dummy {
+    double_method! {self, {
+        self.0 *= 2;
+        self
+    }}
+}
+
+macro_rules! each_tt {
+    () => {};
+    ($_tt:tt $($rest:tt)*) => {each_tt!($($rest)*);};
+}
+
+macro_rules! sing {
+    () => {};
+    ($tt:tt $($rest:tt)*) => {log_syntax!($tt); sing!($($rest)*);};
+}
+
 fn main() {
     let x = four!();
     println!("{}", x);
@@ -124,4 +152,22 @@ fn main() {
 
     println!("{}", what_is_2!(self));
     println!("{}", call_with_ident!(what_is_2(self)));
+
+    let x = Dummy(1).double();
+    println!("{}", x.0);
+
+//    each_tt!(foo bar baz quux);
+    trace_macros!(true);
+    each_tt!(spim wak plee whum);
+    trace_macros!(false);
+//    each_tt!(trom, qlip, winp, xod);
+
+    sing! {
+        ^ < @ < . @ *
+        '\x08' '{' '"' _ # ' '
+        - @ '$' && / _ %
+        ! ( '\t' @ | = >
+        ; '\x08' '\'' + '$' ? '\x7f'
+        , # '"' ~ | ) '\x07'
+    }
 }
