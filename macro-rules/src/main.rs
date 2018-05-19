@@ -46,11 +46,11 @@ macro_rules! match_tokens {
     ($($other:tt)*) => {"got something else"};
 }
 
-macro_rules! capture_then_what_is {
-    (#[$m:meta]) => {what_is!(#[$m])};
+macro_rules! capture_then_what_is_1 {
+    (#[$m:meta]) => {what_is_1!(#[$m])};
 }
 
-macro_rules! what_is {
+macro_rules! what_is_1 {
     (#[no_mangle]) => {"no_mangle attribute"};
     (#[inline]) => {"inline attribute"};
     ($($tts:tt)*) => {concat!("something else (", stringify!($($tts)*), ")")};
@@ -59,10 +59,21 @@ macro_rules! what_is {
 macro_rules! using_a {
     ($a:ident, $e:expr) => {
         {
-            let $a = 42;
+            let mut $a = 42;
+
+            $a += 8;
             $e
         }
     }
+}
+
+macro_rules! what_is_2 {
+    (self) => {"the keyword `self`"};
+    ($i:ident) => {concat!("the identifier `", stringify!($i), "`")};
+}
+
+macro_rules! call_with_ident {
+    ($c:ident($i:ident)) => {$c!($i)};
 }
 
 fn main() {
@@ -102,12 +113,15 @@ fn main() {
 
     println!(
         "{}\n{}\n{}\n{}",
-        what_is!(#[no_mangle]),
-        what_is!(#[inline]),
-        capture_then_what_is!(#[no_mangle]),
-        capture_then_what_is!(#[inline]),
+        what_is_1!(#[no_mangle]),
+        what_is_1!(#[inline]),
+        capture_then_what_is_1!(#[no_mangle]),
+        capture_then_what_is_1!(#[inline]),
     );
 
     let x = using_a!(a, a / 10);
     println!("{}", x);
+
+    println!("{}", what_is_2!(self));
+    println!("{}", call_with_ident!(what_is_2(self)));
 }
