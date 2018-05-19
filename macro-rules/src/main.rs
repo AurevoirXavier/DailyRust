@@ -6,12 +6,12 @@ macro_rules! gibberish {
         (4 fn ['spang "whammo"] @_@) => { 1 };
 }
 
-macro_rules! multiply_add {
-    ($a:expr, $b:expr, $c:expr) => {$a * ($b + $c)};
+macro_rules! times_five {
+    ($e:expr) => {5 * $e};
 }
 
-marco_rules! times_five {
-    ($e:expr) => {t * $e};
+macro_rules! multiply_add {
+    ($a:expr, $b:expr, $c:expr) => {$a * ($b + $c)};
 }
 
 fn main() {
@@ -21,10 +21,12 @@ fn main() {
     let x = gibberish!(4 fn ['spang "whammo"] @_@);
     println!("{}", x);
 
+    let x = times_five!(2);
+    println!("{}", x);
+
     let x = multiply_add!(2, 2, 3);
     println!("{}", x);
 
-    let x = times_five!();
-    println!("{}", x);
+
 }
 
