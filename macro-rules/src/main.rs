@@ -3,7 +3,7 @@ macro_rules! four {
 }
 
 macro_rules! gibberish {
-        (4 fn ['spang "whammo"] @_@) => { 1 };
+    (4 fn ['spang "whammo"] @_@) => { 1 };
 }
 
 macro_rules! times_five {
@@ -15,6 +15,23 @@ macro_rules! multiply_add {
 }
 
 macro_rules! vec_strs {
+    (
+        $(
+            ($a:expr, $b:expr)
+        ),
+        *
+    ) => {
+        {
+            let mut v = Vec::new();
+
+            $(
+                v.push(format!("{}", $b));
+            )*
+
+            v
+        }
+    };
+
     (
         $(
             $element:expr
@@ -47,6 +64,9 @@ fn main() {
     println!("{}", x);
 
     let x = vec_strs!(1, 2, 3, 4);
+    println!("{:?}", x);
+
+    let x = vec_strs!((1, 2), (3, 4));
     println!("{:?}", x);
 }
 
