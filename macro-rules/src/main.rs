@@ -174,6 +174,7 @@ fn main() {
     let fib = {
         use std::ops::Index;
 
+        #[derive(Debug)]
         struct Recurrence {
             mem: [u64; 2],
             pos: usize,
@@ -228,6 +229,7 @@ fn main() {
                     }
 
                     self.pos += 1;
+
                     Some(next_val)
                 }
             }
@@ -236,5 +238,9 @@ fn main() {
         Recurrence { mem: [0, 1], pos: 0 }
     };
 
-    for e in fib.take(10) { println!("{}", e); }
+//    for e in fib.take(10) { println!("{}", e); }
+
+    let mut x = fib;
+    for _ in 0..10 { x.next(); }
+    println!("{:?}", x);
 }
