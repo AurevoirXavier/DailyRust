@@ -111,7 +111,7 @@ macro_rules! count_exprs {
 }
 
 macro_rules! recurrence {
-    ($seq:ident [$ind:ident]: $sty:ty = $($inits:expr),+ => $recur:expr) => {
+    ($seq:ident [$ind:ident]: [$sty:ty] = [$($inits:expr),+] => $recur:expr) => {
         {
             use std::ops::Index;
 
