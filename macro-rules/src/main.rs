@@ -223,6 +223,7 @@ fn main() {
                         use std::mem::swap;
 
                         let mut swap_tmp = next_val;
+
                         for i in (0..2).rev() {
                             swap(&mut swap_tmp, &mut self.mem[i]);
                         }
