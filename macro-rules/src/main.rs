@@ -205,7 +205,7 @@ macro_rules! recognise_tree {
 //}
 
 macro_rules! callback {
-    ($callback:ident ! ( $($args:tt)*) ) => { $callback!($($args)*) };
+    ($callback:ident!($($args:tt)*)) => { $callback!($($args)*) };
 }
 
 fn main() {
