@@ -238,7 +238,7 @@ macro_rules! o_O {
 }
 
 macro_rules! init_array {
-    (@accum (0, $_e:expr) -> ($($body:tt)*)) => { init_array!(@as_expr [$($body)*]) };
+    (@accum (0, $_:expr) -> ($($body:tt)*)) => { init_array!(@as_expr [$($body)*]) };
     (@accum (1, $e:expr) -> ($($body:tt)*)) => { init_array!(@accum (0, $e) -> ($($body)* $e,)) };
     (@accum (2, $e:expr) -> ($($body:tt)*)) => { init_array!(@accum (1, $e) -> ($($body)* $e,)) };
     (@accum (3, $e:expr) -> ($($body:tt)*)) => { init_array!(@accum (2, $e) -> ($($body)* $e,)) };
@@ -249,7 +249,6 @@ macro_rules! init_array {
         init_array!(@accum ($n, e.clone()) -> ())
     }};
 }
-
 
 fn main() {
     let x = four!();
