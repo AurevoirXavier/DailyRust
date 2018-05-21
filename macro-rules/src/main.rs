@@ -2,19 +2,19 @@
 #![feature(log_syntax)]
 
 macro_rules! four {
-    () => {1 + 3};
+    () => { 1 + 3 };
 }
 
 macro_rules! gibberish {
-    (4 fn ['spang "whammo"] @_@) => {1};
+    (4 fn ['spang "whammo"] @_@) => { 1 };
 }
 
 macro_rules! times_five {
-    ($e:expr) => {5 * $e};
+    ($e:expr) => { 5 * $e };
 }
 
 macro_rules! multiply_add {
-    ($a:expr, $b:expr, $c:expr) => {$a * ($b + $c)};
+    ($a:expr, $b:expr, $c:expr) => { $a * ($b + $c) };
 }
 
 macro_rules! vec_strs {
@@ -36,27 +36,27 @@ macro_rules! vec_strs {
 }
 
 macro_rules! capture_expr_then_stringify {
-    ($e:expr) => {stringify!($e)};
+    ($e:expr) => { stringify!($e) };
 }
 
 macro_rules! capture_then_match_tokens {
-    ($e:expr) => {match_tokens!($e)};
+    ($e:expr) => { match_tokens!($e) };
 }
 
 macro_rules! match_tokens {
-    ($a:tt + $b:tt) => {"got an addition"};
-    (($i:ident)) => {"got an identifier"};
-    ($($other:tt)*) => {"got something else"};
+    ($a:tt + $b:tt) => { "got an addition" };
+    (($i:ident)) => { "got an identifier" };
+    ($($other:tt)*) => { "got something else" };
 }
 
 macro_rules! capture_then_what_is_1 {
-    (#[$m:meta]) => {what_is_1!(#[$m])};
+    (#[$m:meta]) => { what_is_1!(#[$m]) };
 }
 
 macro_rules! what_is_1 {
-    (#[no_mangle]) => {"no_mangle attribute"};
-    (#[inline]) => {"inline attribute"};
-    ($($tts:tt)*) => {concat!("something else (", stringify!($($tts)*), ")")};
+    (#[no_mangle]) => { "no_mangle attribute" };
+    (#[inline]) => { "inline attribute" };
+    ($($tts:tt)*) => { concat!("something else (", stringify!($($tts)*), ")") };
 }
 
 macro_rules! using_a {
@@ -71,12 +71,12 @@ macro_rules! using_a {
 }
 
 macro_rules! what_is_2 {
-    (self) => {"the keyword `self`"};
-    ($i:ident) => {concat!("the identifier `", stringify!($i), "`")};
+    (self) => { "the keyword `self`" };
+    ($i:ident) => { concat!("the identifier `", stringify!($i), "`") };
 }
 
 macro_rules! call_with_ident {
-    ($c:ident($i:ident)) => {$c!($i)};
+    ($c:ident($i:ident)) => { $c!($i) };
 }
 
 macro_rules! double_method {
@@ -96,12 +96,12 @@ impl Dummy {
 
 macro_rules! each_tt {
     () => {};
-    ($_tt:tt $($rest:tt)*) => {each_tt!($($rest)*);};
+    ($_tt:tt $($rest:tt)*) => { each_tt!($($rest)*); };
 }
 
 macro_rules! sing {
     () => {};
-    ($tt:tt $($rest:tt)*) => {log_syntax!($tt); sing!($($rest)*);};
+    ($tt:tt $($rest:tt)*) => { log_syntax!($tt); sing!($($rest)*); };
 }
 
 macro_rules! count_exprs {
@@ -184,20 +184,20 @@ macro_rules! recurrence {
 }
 
 macro_rules! call_with_larch {
-    ($callback:ident) => {$callback!(larch)};
+    ($callback:ident) => { $callback!(larch) };
 }
 
 macro_rules! expand_to_larch {
-    () => {larch};
+    () => { larch };
 }
 
 macro_rules! recognise_tree {
-    (larch) => {println!("#1, the larch")};
-    (redwood) => {println!("#2, the redwood")};
-    (fir) => {println!("#3, the fir")};
-    (chestnut) => {println!("#4, the chestnun")};
-    (pine) => {println!("#5, the pine")};
-    ($($other:tt)*) => {println!("I don't know, some kind of birch maybe?")};
+    (larch) => { println!("#1, the larch") };
+    (redwood) => { println!("#2, the redwood") };
+    (fir) => { println!("#3, the fir")};
+    (chestnut) => { println!("#4, the chestnun") };
+    (pine) => { println!("#5, the pine") };
+    ($($other:tt)*) => { println!("I don't know, some kind of birch maybe?") };
 }
 
 //macro_rules! callback {
@@ -205,7 +205,7 @@ macro_rules! recognise_tree {
 //}
 
 macro_rules! callback {
-    ($callback:ident ! ( $($args:tt)*) ) => {$callback!($($args)*)};
+    ($callback:ident ! ( $($args:tt)*) ) => { $callback!($($args)*) };
 }
 
 fn main() {
