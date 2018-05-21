@@ -183,6 +183,31 @@ macro_rules! recurrence {
     };
 }
 
+macro_rules! call_with_larch {
+    ($callback:ident) => {$callback!(larch)};
+}
+
+macro_rules! expand_to_larch {
+    () => {larch};
+}
+
+macro_rules! recognise_tree {
+    (larch) => {println!("#1, the larch")};
+    (redwood) => {println!("#2, the redwood")};
+    (fir) => {println!("#3, the fir")};
+    (chestnut) => {println!("#4, the chestnun")};
+    (pine) => {println!("#5, the pine")};
+    ($($other:tt)*) => {println!("I don't know, some kind of birch maybe?")};
+}
+
+//macro_rules! callback {
+//    ($callback:ident($($args:tt)*)) => {$callback!($($args)*)};
+//}
+
+macro_rules! callback {
+    ($callback:ident ! ( $($args:tt)*) ) => {$callback!($($args)*)};
+}
+
 fn main() {
     let x = four!();
     println!("{}", x);
@@ -253,4 +278,8 @@ fn main() {
     for e in recurrence!(a[n]: [u64] = [0, 1] => a[n - 1] + a[n - 2]).take(10) {
         println!("{}", e)
     }
+
+    recognise_tree!(expand_to_larch!());
+    call_with_larch!(recognise_tree);
+    callback!(callback!(println!("Yes, this was unnecessary.")));
 }
