@@ -20,7 +20,6 @@ macro_rules! multiply_add {
 macro_rules! vec_strs {
     ($(($a:expr, $b:expr)),*) => {{
         let mut v = Vec::new();
-
         $(v.push(format!("{}", $b));)*
 
         v
@@ -28,7 +27,6 @@ macro_rules! vec_strs {
 
     ($($element:expr),*) => {{
         let mut v = Vec::new();
-
         $(v.push(format!("{}", $element));)*
 
         v
@@ -63,8 +61,8 @@ macro_rules! using_a {
     ($a:ident, $e:expr) => {
         {
             let mut $a = 42;
-
             $a += 8;
+
             $e
         }
     }
@@ -91,6 +89,7 @@ struct Dummy(i32);
 impl Dummy {
     double_method! {self, {
         self.0 *= 2;
+
         self
     }}
 }
@@ -226,8 +225,8 @@ macro_rules! mixed_rules {
 
 #[macro_export]
 macro_rules! foo {
-    (@as_expr $e:expr) => { println!("{:?}", $e); };
-    ($($tts:tt)*) => { $(foo!(@as_expr $tts))* };
+    (@as_expr $($e:expr)*) => { ($($e),*) };
+    ($($tts:tt)*) => { foo!(@as_expr $($tts)*) };
 }
 
 macro_rules! bar {
@@ -316,7 +315,7 @@ fn main() {
     let y = 1;
     mixed_rules!(trace x; trace y; trace z = 1;);
 
-    foo!(1 2);
+    println!("{:?}", foo!(1 2 3 4 5));
     println!("{:?}", bar!(1 2 3 4 5));
 
     let x: &[i32] = o_O!((10, [1, 2, 3]), (20, [4, 5, 6]));
