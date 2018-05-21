@@ -85,6 +85,7 @@ macro_rules! double_method {
     };
 }
 
+#[derive(Debug)]
 struct Dummy(i32);
 
 impl Dummy {
@@ -208,6 +209,21 @@ macro_rules! callback {
     ($callback:ident!($($args:tt)*)) => { $callback!($($args)*) };
 }
 
+macro_rules! mixed_rules {
+    () => {};
+    (trace $name:ident; $($tail:tt)*) => {{
+        println!(concat!(stringify!($name), " = {:?}"), $name);
+
+        mixed_rules!($($tail)*);
+    }};
+    (trace $name:ident = $init:expr; $($tail:tt)*) => {{
+        let $name = $init;
+
+        println!(concat!(stringify!($name), " = {:?}"), $name);
+        mixed_rules($($tail)*);
+    }};
+}
+
 fn main() {
     let x = four!();
     println!("{}", x);
@@ -282,4 +298,7 @@ fn main() {
     recognise_tree!(expand_to_larch!());
     call_with_larch!(recognise_tree);
     callback!(callback!(println!("Yes, this was unnecessary.")));
+
+    let y = 1;
+    mixed_rules!(trace x; trace y;);
 }
