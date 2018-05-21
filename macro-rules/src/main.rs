@@ -224,6 +224,16 @@ macro_rules! mixed_rules {
     }};
 }
 
+#[macro_export]
+macro_rules! foo {
+    (@as_expr $e:expr) => { $e };
+    ($($tts:tt)*) => { foo!(@as_expr $($tts)*) };
+}
+
+macro_rules! o_O {
+    ($($x:expr; [$($y:expr),*]);*) => { &[$($($x + $y),*),*] };
+}
+
 fn main() {
     let x = four!();
     println!("{}", x);
@@ -301,4 +311,9 @@ fn main() {
 
     let y = 1;
     mixed_rules!(trace x; trace y; trace z = 1;);
+
+    println!("{:?}", foo!(1));
+
+    let x: &[i32] = o_O!(10; [1, 2, 3]; 20; [4, 5, 6]);
+    println!("{:?}", x);
 }
