@@ -220,7 +220,7 @@ macro_rules! mixed_rules {
         let $name = $init;
 
         println!(concat!(stringify!($name), " = {:?}"), $name);
-        mixed_rules($($tail)*);
+        mixed_rules!($($tail)*);
     }};
 }
 
@@ -300,5 +300,5 @@ fn main() {
     callback!(callback!(println!("Yes, this was unnecessary.")));
 
     let y = 1;
-    mixed_rules!(trace x; trace y;);
+    mixed_rules!(trace x; trace y; trace z = 1;);
 }
