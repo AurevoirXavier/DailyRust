@@ -414,5 +414,6 @@ fn main() {
     );
 
     println!("{:?}", struct_name!(pub pub pub struct Test()));
-    println!("{:?}", newtype_new!(struct Test(u32);));
+    newtype_new!(struct Dummy(i32););
+    println!("{:?}", Dummy::new(123));
 }
