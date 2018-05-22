@@ -331,9 +331,7 @@ macro_rules! abacus_1 {
 macro_rules! abacus_2 {
     (-) => { -1 };
     (+) => { 1 };
-    ($($moves:tt)*) => {
-        0 $(+ abacus_2!($moves))*
-    }
+    ($($moves:tt)*) => { 0 $(+ abacus_2!($moves))* }
 }
 
 macro_rules! count_tts_1 {
