@@ -250,10 +250,6 @@ macro_rules! init_array {
     }};
 }
 
-macro_rules! replace_expr {
-    ($_:tt $sub:expr) => { $sub };
-}
-
 macro_rules! tuple_default {
     ($($tup_tys:ty),*) => {(
         $(replace_expr!(($tup_tys) <$tup_tys>::default()),)*
@@ -376,6 +372,17 @@ macro_rules! count_tts_4 {
 }
 
 //const A:usize = count_tts_4!(,);
+
+macro_rules! count_idents {
+    ($($idents:ident),* $(,)*) => {
+        {
+            #[allow(dead_code, non_camel_case_types)]
+            enum Idents { $($idents,)* __CountIdentsLast }
+            const COUNT: u32 = Idents::__CountIdentsLast as u32;
+            COUNT
+        }
+    };
+}
 
 fn main() {
     let x = four!();
@@ -538,4 +545,17 @@ fn main() {
         ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,,
         ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,,
     ));
+    println!("{}", count_idents!(a, b, c));
+    println!("{}", {
+        #[allow(dead_code)]
+        enum I {
+            A,
+            B,
+            C,
+            D,
+            I,
+        }
+
+        I::I as u32
+    });
 }
