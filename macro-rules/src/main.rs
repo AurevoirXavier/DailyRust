@@ -260,6 +260,30 @@ macro_rules! tuple_default {
     )};
 }
 
+macro_rules! call_a_or_b_on_tail {
+    ((a: $a:expr, b: $b:expr), 调a $($tail:tt)*) => {
+        $a(stringify!($($tail)*))
+    };
+
+    ((a: $a:expr, b: $b:expr), 调b $($tail:tt)*) => {
+        $b(stringify!($($tail)*))
+    };
+
+    ($ab:tt, $_skip:tt $($tail:tt)*) => {
+        call_a_or_b_on_tail!($ab, $($tail)*)
+    };
+}
+
+fn compute_len(s: &str) -> Option<usize> {
+    Some(s.len())
+}
+
+fn show_tail(s: &str) -> Option<usize> {
+    println!("tail: {:?}", s);
+
+    None
+}
+
 fn main() {
     let x = four!();
     println!("{}", x);
@@ -348,4 +372,23 @@ fn main() {
     println!("{:?}", strings);
 
     println!("{:?}", tuple_default!(usize, f64, char, String, Vec<u32>));
+
+    assert_eq!(
+        call_a_or_b_on_tail!(
+            (a: compute_len, b: show_tail),
+            规则的 递归部分 将跳过 所有这些标记
+            它们并不关心 我们究竟 调b 还是 调a
+            只有 终结规则 关心
+        ),
+        None
+    );
+    assert_eq!(
+        call_a_or_b_on_tail!(
+            (a: compute_len, b: show_tail),
+            而现在 为了证明 有两条路径 是合理的
+            我们也 调a 一下: 它的 输入 应该是
+            自我引用 因此 我们让他返回 一个 81
+        ),
+        Some(81)
+    );
 }
