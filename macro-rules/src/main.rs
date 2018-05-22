@@ -305,6 +305,41 @@ macro_rules! newtype_new {
 
 macro_rules! as_item { ($i:item) => { $i } }
 
+macro_rules! abacus_1 {
+    ((- $($moves:tt)*) -> (+ $($count:tt)*)) => {
+        abacus_1!(($($moves)*) -> ($($count)*))
+    };
+    ((- $($moves:tt)*) -> ($($count:tt)*)) => {
+        abacus_1!(($($moves)*) -> (- $($count)*))
+    };
+    ((+ $($moves:tt)*) -> (- $($count:tt)*)) => {
+        abacus_1!(($($moves)*) -> ($($count)*))
+    };
+    ((+ $($moves:tt)*) -> ($($count:tt)*)) => {
+        abacus_1!(($($moves)*) -> (+ $($count)*))
+    };
+
+    (() -> ()) => {0};
+    (() -> (- $($count:tt)*)) => {
+        { (-1i32) $(- replace_expr!($count 1i32))* }
+    };
+    (() -> (+ $($count:tt)*)) => {
+        { (1i32) $(+ replace_expr!($count 1i32))* }
+    };
+}
+
+macro_rules! replace_expr {
+    ($_:tt $sub:expr) => { $sub };
+}
+
+macro_rules! abacus_2 {
+    (-) => { -1 };
+    (+) => { 1 };
+    ($($moves:tt)*) => {
+        0 $(+ abacus_2!($moves))*
+    }
+}
+
 fn main() {
     let x = four!();
     println!("{}", x);
@@ -416,4 +451,7 @@ fn main() {
     println!("{:?}", struct_name!(pub pub pub struct Test()));
     newtype_new!(struct Dummy(i32););
     println!("{:?}", Dummy::new(123));
+
+    println!("{}", abacus_1!((++-+-+++--++---++----+-----) -> ()));
+    println!("{}", abacus_2!(++-+-+++--++---++----+-----));
 }
