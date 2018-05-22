@@ -345,6 +345,30 @@ macro_rules! count_tts_2 {
     ($_head:tt $($tail:tt)*) => { 1usize + count_tts_2!($($tail)*) };
 }
 
+macro_rules! count_tts_3 {
+    (
+        $_a:tt $_b:tt $_c:tt $_d:tt $_e:tt
+        $_f:tt $_g:tt $_h:tt $_i:tt $_j:tt
+        $_k:tt $_l:tt $_m:tt $_n:tt $_o:tt
+        $_p:tt $_q:tt $_r:tt $_s:tt $_t:tt
+        $($tail:tt)*
+    ) => { 20usize + count_tts!($($tail)*) };
+    (
+        $_a:tt $_b:tt $_c:tt $_d:tt $_e:tt
+        $_f:tt $_g:tt $_h:tt $_i:tt $_j:tt
+        $($tail:tt)*
+    ) => { 10usize + count_tts!($($tail)*) };
+    (
+        $_a:tt $_b:tt $_c:tt $_d:tt $_e:tt
+        $($tail:tt)*
+    ) => { 5usize + count_tts!($($tail)*) };
+    (
+        $_a:tt
+        $($tail:tt)*
+    ) => { 1usize + count_tts!($($tail)*) };
+    () => { 0usize };
+}
+
 fn main() {
     let x = four!();
     println!("{}", x);
