@@ -284,6 +284,27 @@ fn show_tail(s: &str) -> Option<usize> {
     None
 }
 
+macro_rules! struct_name {
+    ($(pub)* struct $name:ident $($rest:tt)*) => { stringify!($name) };
+}
+
+macro_rules! newtype_new {
+    (struct $name:ident($t:ty);) => { newtype_new! { () struct $name($t); } };
+    (pub struct $name:ident($t:ty);) => { newtype_new! { (pub) struct $name($t); } };
+
+    (($($vis:tt)*) struct $name:ident($t:ty);) => {
+        as_item! {
+            impl $name {
+                $($vis)* fn new(value: $t) -> Self {
+                    $name(value)
+                }
+            }
+        }
+    };
+}
+
+macro_rules! as_item { ($i:item) => { $i } }
+
 fn main() {
     let x = four!();
     println!("{}", x);
@@ -391,4 +412,7 @@ fn main() {
         ),
         Some(81)
     );
+
+    println!("{:?}", struct_name!(pub pub pub struct Test()));
+    println!("{:?}", newtype_new!(struct Test(u32);));
 }
