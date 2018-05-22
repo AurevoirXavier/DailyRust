@@ -384,6 +384,65 @@ macro_rules! count_idents {
     };
 }
 
+macro_rules! parse_unitary_variants {
+    (@as_expr $e:expr) => { $e };
+    (@as_item $($i:item)+) => { $($i)+ };
+
+    (
+        @collect_unitary_variants ($callback:ident ( $($args:tt)* )),
+        ($(,)*) -> ($($var_names:ident,)*)
+    ) => {
+        parse_unitary_variants! {
+            @as_expr
+            $callback!{ $($args)* ($($var_names),*) }
+        }
+    };
+
+    (
+        @collect_unitary_variants ($callback:ident { $($args:tt)* }),
+        ($(,)*) -> ($($var_names:ident,)*)
+    ) => {
+        parse_unitary_variants! {
+            @as_item
+            $callback!{ $($args)* ($($var_names),*) }
+        }
+    };
+
+    (
+        @collect_unitary_variants $fixed:tt,
+        (#[$_attr:meta] $($tail:tt)*) -> ($($var_names:tt)*)
+    ) => {
+        parse_unitary_variants! {
+            @collect_unitary_variants $fixed,
+            ($($tail)*) -> ($($var_names)*)
+        }
+    };
+
+    (
+        @collect_unitary_variants $fixed:tt,
+        ($var:ident $(= $_val:expr)*, $($tail:tt)*) -> ($($var_names:tt)*)
+    ) => {
+        parse_unitary_variants! {
+            @collect_unitary_variants $fixed,
+            ($($tail)*) -> ($($var_names)* $var,)
+        }
+    };
+
+    (
+        @collect_unitary_variants $fixed:tt,
+        ($var:ident $_struct:tt, $($tail:tt)*) -> ($($var_names:tt)*)
+    ) => {
+        const _error: () = "cannot parse unitary variants from enum with non-unitary variants";
+    };
+
+    (enum $name:ident {$($body:tt)*} => $callback:ident $arg:tt) => {
+        parse_unitary_variants! {
+            @collect_unitary_variants
+            ($callback $arg), ($($body)*,) -> ()
+        }
+    };
+}
+
 fn main() {
     let x = four!();
     println!("{}", x);
@@ -558,4 +617,6 @@ fn main() {
 
         I::I as u32
     });
+
+    println!("{}", parse_unitary_variants!(enum A {} => count_tts_3 ()));
 }
