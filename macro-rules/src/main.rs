@@ -96,7 +96,7 @@ impl Dummy {
 
 macro_rules! each_tt {
     () => {};
-    ($_tt:tt $($rest:tt)*) => { each_tt!($($rest)*); };
+    ($_:tt $($rest:tt)*) => { each_tt!($($rest)*); };
 }
 
 macro_rules! sing {
