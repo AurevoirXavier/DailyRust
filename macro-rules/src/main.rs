@@ -230,7 +230,7 @@ macro_rules! foo {
 }
 
 macro_rules! bar {
-    ($($tts:tt)*) => { &[$($tts),*] };
+    ($($tts:expr,)*) => { &[$($tts),*] };
 }
 
 macro_rules! o_O {
@@ -339,7 +339,7 @@ fn main() {
     mixed_rules!(trace x; trace y; trace z = 1;);
 
     println!("{:?}", foo!(1 2 3 4 5));
-    println!("{:?}", bar!(1 2 3 4 5));
+    println!("{:?}", bar!(1, 2, 3, 4, 5,));
 
     let x: &[i32] = o_O!((10, [1, 2, 3]), (20, [4, 5, 6]));
     println!("{:?}", x);
