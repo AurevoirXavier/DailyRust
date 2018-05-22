@@ -328,16 +328,21 @@ macro_rules! abacus_1 {
     };
 }
 
-macro_rules! replace_expr {
-    ($_:tt $sub:expr) => { $sub };
-}
-
 macro_rules! abacus_2 {
     (-) => { -1 };
     (+) => { 1 };
     ($($moves:tt)*) => {
         0 $(+ abacus_2!($moves))*
     }
+}
+
+macro_rules! count_tts_1 {
+    ($($tts:tt)*) => { 0usize $(+ replace_expr!($tts 1usize))* };
+}
+
+macro_rules! count_tts_2 {
+    () => { 0usize };
+    ($_head:tt $($tail:tt)*) => { 1usize + count_tts_2!($($tail)*) };
 }
 
 fn main() {
@@ -454,4 +459,7 @@ fn main() {
 
     println!("{}", abacus_1!((++-+-+++--++---++----+-----) -> ()));
     println!("{}", abacus_2!(++-+-+++--++---++----+-----));
+
+    println!("{}", count_tts_1!(, , , , ,));
+    println!("{}", count_tts_2!(, , , , ,));
 }
