@@ -31,18 +31,57 @@ impl<T: Ord + fmt::Display> Node<T> {
 
 impl<T: Ord + fmt::Display> fmt::Display for Node<T> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let mut queue = VecDeque::from(vec![self]);
+        let mut queue = VecDeque::from(vec![Some(self)]);
         let mut tree = String::new();
+        let mut i: u32 = 1;
+        let mut j: u32 = 1;
+        let mut k: u32 = 0;
 
-        while let Some(Node { val, l, r }) = queue.pop_front() {
-            tree.push_str(&val.to_string());
-            tree.push('\n');
+        while let Some(node) = queue.pop_front() {
+            if let Some(Node { val, l, r }) = node {
+                k = 0;
 
-            if let Some(node) = l { queue.push_back(node); }
-            if let Some(node) = r { queue.push_back(node); }
+                tree.push_str(&val.to_string());
+
+                if i == j {
+                    tree.push('\n');
+
+                    i = 1;
+                    j *= 2;
+                } else {
+                    tree.push(' ');
+
+                    i += 1;
+                }
+
+                if let Some(node) = l { queue.push_back(Some(node)); } else { queue.push_back(None); }
+                if let Some(node) = r { queue.push_back(Some(node)); } else { queue.push_back(None); }
+            } else {
+                if k == j { break; }
+
+                k += 1;
+
+                tree.push('_');
+
+                if i == j {
+                    tree.push('\n');
+
+                    i = 1;
+                    j *= 2;
+                } else {
+                    tree.push(' ');
+
+                    i += 1;
+                }
+
+                queue.push_back(None);
+                queue.push_back(None);
+            }
         }
 
-        write!(f, "{}", tree)
+        let tree: Vec<&str> = tree.split('\n').collect();
+
+        write!(f, "{}", tree[..tree.len() - 1].join("\n"))
     }
 }
 
@@ -116,6 +155,9 @@ fn main() {
             })),
         }
     );
+
+    x.insert("c");
+    x.insert("v");
 
     println!("{}", x);
 
