@@ -1,15 +1,16 @@
 use std::fmt;
 use std::cmp::Ordering;
+use std::collections::VecDeque;
 
 #[derive(Debug)]
 #[derive(PartialEq)]
-struct Node<T: Ord> {
+struct Node<T: Ord + fmt::Display> {
     val: T,
     l: Option<Box<Node<T>>>,
     r: Option<Box<Node<T>>>,
 }
 
-impl<T: Ord> Node<T> {
+impl<T: Ord + fmt::Display> Node<T> {
     pub fn insert(&mut self, insert_val: T) {
         if self.val == insert_val { return; }
 
@@ -28,10 +29,20 @@ impl<T: Ord> Node<T> {
     }
 }
 
-impl<T: Ord> fmt::Display for Node<T> {
+impl<T: Ord + fmt::Display> fmt::Display for Node<T> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        while let Some() = self {}
-        write!(f, "{}", );
+        let mut queue = VecDeque::from(vec![self]);
+        let mut tree = String::new();
+
+        while let Some(Node { val, l, r }) = queue.pop_front() {
+            tree.push_str(&val.to_string());
+            tree.push('\n');
+
+            if let Some(node) = l { queue.push_back(node); }
+            if let Some(node) = r { queue.push_back(node); }
+        }
+
+        write!(f, "{}", tree)
     }
 }
 
@@ -105,6 +116,8 @@ fn main() {
             })),
         }
     );
+
+    println!("{}", x);
 
     let mut x = Tree::new();
 
