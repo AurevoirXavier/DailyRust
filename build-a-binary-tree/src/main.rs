@@ -87,8 +87,8 @@ impl<T: Ord + fmt::Display> fmt::Display for Node<T> {
 
 #[derive(Debug)]
 #[derive(PartialEq)]
-enum Tree<T: Ord> {
-    Leaf {
+enum Tree<T: Ord + fmt::Display> {
+    Node {
         val: T,
         l: Box<Tree<T>>,
         r: Box<Tree<T>>,
@@ -96,18 +96,18 @@ enum Tree<T: Ord> {
     Empty,
 }
 
-impl<T: Ord> Tree<T> {
+impl<T: Ord + fmt::Display> Tree<T> {
     fn new() -> Tree<T> { Tree::Empty }
 
     fn insert(&mut self, nv: T) {
-        if let &mut Tree::Leaf { ref val, ref mut l, ref mut r } = self {
+        if let &mut Tree::Node { ref val, ref mut l, ref mut r } = self {
             match nv.cmp(val) {
                 Ordering::Less => l.insert(nv),
                 Ordering::Greater => r.insert(nv),
                 _ => return
             }
         } else {
-            *self = Tree::Leaf {
+            *self = Tree::Node {
                 val: nv,
                 l: Box::new(Tree::Empty),
                 r: Box::new(Tree::Empty),
@@ -115,16 +115,72 @@ impl<T: Ord> Tree<T> {
         }
     }
 
-    fn is_empty(&self) -> bool { if let &Tree::Leaf { .. } = self { false } else { true } }
+    fn is_empty(&self) -> bool { if let &Tree::Node { .. } = self { false } else { true } }
 
     fn find(&self, fv: T) -> bool {
-        if let &Tree::Leaf { ref val, ref l, ref r } = self {
+        if let &Tree::Node { ref val, ref l, ref r } = self {
             match fv.cmp(val) {
                 Ordering::Less => r.find(fv),
                 Ordering::Greater => l.find(fv),
                 _ => true
             }
         } else { false }
+    }
+}
+
+impl<T: Ord + fmt::Display> fmt::Display for Tree<T> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let mut queue = VecDeque::from(vec![Some(self)]);
+        let mut tree = String::new();
+        let mut i: u32 = 1;
+        let mut j: u32 = 1;
+        let mut k: u32 = 0;
+
+        while let Some(node) = queue.pop_front() {
+            if let Some(Node { val, l, r }) = node {
+                k = 0;
+
+                tree.push_str(&val.to_string());
+
+                if i == j {
+                    tree.push('\n');
+
+                    i = 1;
+                    j *= 2;
+                } else {
+                    tree.push(' ');
+
+                    i += 1;
+                }
+
+                if let Some(node) = l { queue.push_back(Some(node)); } else { queue.push_back(None); }
+                if let Some(node) = r { queue.push_back(Some(node)); } else { queue.push_back(None); }
+            } else {
+                if k == j { break; }
+
+                k += 1;
+
+                tree.push('_');
+
+                if i == j {
+                    tree.push('\n');
+
+                    i = 1;
+                    j *= 2;
+                } else {
+                    tree.push(' ');
+
+                    i += 1;
+                }
+
+                queue.push_back(None);
+                queue.push_back(None);
+            }
+        }
+
+        let tree: Vec<&str> = tree.split('\n').collect();
+
+        write!(f, "{}", tree[..tree.len() - 1].join("\n"))
     }
 }
 
@@ -172,18 +228,18 @@ fn main() {
 
     assert_eq!(
         x,
-        Tree::Leaf {
+        Tree::Node {
             val: "m",
-            l: Box::new(Tree::Leaf {
+            l: Box::new(Tree::Node {
                 val: "a",
                 l: Box::new(Tree::Empty),
-                r: Box::new(Tree::Leaf {
+                r: Box::new(Tree::Node {
                     val: "b",
                     l: Box::new(Tree::Empty),
                     r: Box::new(Tree::Empty),
                 }),
             }),
-            r: Box::new(Tree::Leaf {
+            r: Box::new(Tree::Node {
                 val: "z",
                 l: Box::new(Tree::Empty),
                 r: Box::new(Tree::Empty),
@@ -195,7 +251,7 @@ fn main() {
 //    match a {
 //        val => println!("{:?}", std::mem::size_of_val(&val))
 //    }
-
+//
 //    let a = Some("Hello!".to_string());
 //
 //    match a {
