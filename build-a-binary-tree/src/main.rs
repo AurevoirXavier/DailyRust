@@ -17,14 +17,11 @@ impl<T: Ord + fmt::Display> Node<T> {
         let node = if insert_val < self.val { &mut self.l } else { &mut self.r };
 
         if let &mut Some(ref mut sub_node) = node { sub_node.insert(insert_val); } else {
-            let new_node = Node {
+            *node = Some(Box::new(Node {
                 val: insert_val,
                 l: None,
                 r: None,
-            };
-            let boxed_node = Some(Box::new(new_node));
-
-            *node = boxed_node;
+            }));
         }
     }
 }
@@ -32,56 +29,39 @@ impl<T: Ord + fmt::Display> Node<T> {
 impl<T: Ord + fmt::Display> fmt::Display for Node<T> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut queue = VecDeque::from(vec![Some(self)]);
-        let mut tree = String::new();
-        let mut i: u32 = 1;
-        let mut j: u32 = 1;
-        let mut k: u32 = 0;
+        let mut tree = vec![];
 
         while let Some(node) = queue.pop_front() {
             if let Some(Node { val, l, r }) = node {
-                k = 0;
+                tree.push(val.to_string());
 
-                tree.push_str(&val.to_string());
-
-                if i == j {
-                    tree.push('\n');
-
-                    i = 1;
-                    j *= 2;
-                } else {
-                    tree.push(' ');
-
-                    i += 1;
-                }
-
+                if l.is_none() && r.is_none() { continue; }
                 if let Some(node) = l { queue.push_back(Some(node)); } else { queue.push_back(None); }
                 if let Some(node) = r { queue.push_back(Some(node)); } else { queue.push_back(None); }
-            } else {
-                if k == j { break; }
+            } else { tree.push("".to_string()); }
+        }
 
-                k += 1;
+        let mut str = String::new();
+        let mut edge = 1u32;
+        let mut curr = 0u32;
 
-                tree.push('_');
+        for node in tree.into_iter() {
+            match node.as_str() {
+                "" => str.push('_'),
+                node => str.push_str(node)
+            }
 
-                if i == j {
-                    tree.push('\n');
+            curr += 1;
 
-                    i = 1;
-                    j *= 2;
-                } else {
-                    tree.push(' ');
+            if curr != edge { str.push(' '); } else {
+                str.push('\n');
 
-                    i += 1;
-                }
-
-                queue.push_back(None);
-                queue.push_back(None);
+                curr = 0;
+                edge *= 2;
             }
         }
 
-        let tree: Vec<&str> = tree.split('\n').collect();
-
-        write!(f, "{}", tree[..tree.len() - 1].join("\n"))
+        write!(f, "{}", str)
     }
 }
 
@@ -130,57 +110,7 @@ impl<T: Ord + fmt::Display> Tree<T> {
 
 impl<T: Ord + fmt::Display> fmt::Display for Tree<T> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let mut queue = VecDeque::from(vec![Some(self)]);
-        let mut tree = String::new();
-        let mut i: u32 = 1;
-        let mut j: u32 = 1;
-        let mut k: u32 = 0;
-
-        while let Some(node) = queue.pop_front() {
-            if let Some(Node { val, l, r }) = node {
-                k = 0;
-
-                tree.push_str(&val.to_string());
-
-                if i == j {
-                    tree.push('\n');
-
-                    i = 1;
-                    j *= 2;
-                } else {
-                    tree.push(' ');
-
-                    i += 1;
-                }
-
-                if let Some(node) = l { queue.push_back(Some(node)); } else { queue.push_back(None); }
-                if let Some(node) = r { queue.push_back(Some(node)); } else { queue.push_back(None); }
-            } else {
-                if k == j { break; }
-
-                k += 1;
-
-                tree.push('_');
-
-                if i == j {
-                    tree.push('\n');
-
-                    i = 1;
-                    j *= 2;
-                } else {
-                    tree.push(' ');
-
-                    i += 1;
-                }
-
-                queue.push_back(None);
-                queue.push_back(None);
-            }
-        }
-
-        let tree: Vec<&str> = tree.split('\n').collect();
-
-        write!(f, "{}", tree[..tree.len() - 1].join("\n"))
+        write!(f, "")
     }
 }
 
@@ -215,7 +145,7 @@ fn main() {
     x.insert("c");
     x.insert("v");
 
-    println!("{}", x);
+    println!("Struct:\n{}", x);
 
     let mut x = Tree::new();
 
@@ -246,6 +176,11 @@ fn main() {
             }),
         }
     );
+
+    x.insert("c");
+    x.insert("v");
+
+    println!("Enum:\n{}", x);
 
 //    let a = vec![1, 2, 3];
 //    match a {
