@@ -181,21 +181,4 @@ fn main() {
     x.insert("v");
 
     println!("Enum:\n{}", x);
-
-//    let a = vec![1, 2, 3];
-//    match a {
-//        val => println!("{:?}", std::mem::size_of_val(&val))
-//    }
-//
-//    let a = Some("Hello!".to_string());
-//
-//    match a {
-//        Some(s) => {
-//            // s is a String here, and therefore
-//            // is owned by the match
-//        }
-//        None => {}
-//    }
-//
-//    println!("{:?}", a);
 }
