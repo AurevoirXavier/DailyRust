@@ -13,7 +13,7 @@ fn main() {
     let args: Vec<_> = args().collect();
     let mut kyu = match args.len() {
         1 => panic!("please specify address"),
-        2 => Kyu::new(args[1].to_owned()),
+        2 => Kyu::new(&args[1]),
         _ => panic!(format!("invalid arguments {}", args[3]))
     };
 

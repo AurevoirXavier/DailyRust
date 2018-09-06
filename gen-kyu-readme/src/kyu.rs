@@ -1,18 +1,18 @@
-pub struct Kyu {
-    address: &str,
+pub struct Kyu<'a> {
+    address: &'a str,
     name: String,
-    project: String,
-    path: String,
+    rank: String,
+    project: &'a str,
     description: String,
 }
 
-impl Kyu {
-    pub fn new(address: String) -> Kyu {
+impl<'a> Kyu<'a> {
+    pub fn new(address: &str) -> Kyu {
         Kyu {
             address,
             name: String::new(),
-            project: String::new(),
-            path: String::new(),
+            rank: String::new(),
+            project: "",
             description: String::new(),
         }
     }
@@ -25,33 +25,31 @@ impl Kyu {
     fn parse(&mut self) {
         use regex::Regex;
         use reqwest::get;
+        use serde_json::{Value, from_str};
         use select::document::Document;
         use select::predicate::{Predicate, Class, Name};
-        use serde_json;
 
-        let text = get(&self.address)
+        let text = get(self.address)
             .expect("an error occur while downloading")
             .text()
             .unwrap();
         let document = Document::from(text.as_str());
 
-        {
-            let rank = document.find(Class(
-                "inner-small-hex"
-            ).descendant(Name(
-                "span"
-            ))).next()
-                .unwrap()
-                .text();
-            let re = Regex::new(r"kata/(.+)/train").unwrap();
-            self.project = re.captures(&self.address)
-                .unwrap()
-                .get(1)
-                .unwrap()
-                .as_str()
-                .to_string();
-            self.path = format!("{}/{}", rank, &self.project);
-        }
+        self.rank = document.find(Class(
+            "inner-small-hex"
+        ).descendant(Name(
+            "span"
+        ))).next()
+            .unwrap()
+            .text();
+
+        self.project = Regex::new(r"kata/(.+)/train")
+            .unwrap()
+            .captures(&self.address)
+            .unwrap()
+            .get(1)
+            .unwrap()
+            .as_str();
 
         let mut data = document.find(Name("script"));
         for _ in 0..8 { data.next(); }
@@ -59,31 +57,35 @@ impl Kyu {
             .unwrap()
             .text();
 
-        let re = Regex::new(r"App\.data = (.+)\nApp\.routes").unwrap();
-        let caps = re.captures(&text).unwrap();
-        let v: serde_json::Value = serde_json::from_str(
-            caps.get(1)
+        let v: Value = from_str(
+            Regex::new(r"App\.data = (.+)\nApp\.routes")
+                .unwrap()
+                .captures(&text)
+                .unwrap()
+                .get(1)
                 .unwrap()
                 .as_str()
         ).unwrap();
 
-        let name = v["challengeName"].to_string();
+        let name = v["challengeName"].as_str().unwrap();
         self.name = remove_quotes(name);
 
-        let description = v["description"].to_string();
+        let description = v["description"].as_str().unwrap();
         self.description = remove_quotes(description);
     }
 
     fn write(&self) {
+        let path = format!("{}/{}", self.rank, self.project);
+
         {
             use std::fs::create_dir_all;
-            create_dir_all(&self.path).expect("failed to create dir");
+            create_dir_all(&path).expect("failed to create dir");
         }
 
         {
             use std::env::set_current_dir;
             use std::path::Path;
-            set_current_dir(Path::new(&self.path)).expect("failed to change work dir");
+            set_current_dir(Path::new(&path)).expect("failed to change work dir");
         }
 
         {
@@ -97,11 +99,11 @@ impl Kyu {
         {
             use std::fs::File;
             use std::io::prelude::*;
-            let mut f = File::create("README.md").expect("failed to create README.md");
+            let mut f = File::create("README.md").expect("failed to create README");
             f.write_all(self.description.as_bytes()).expect("an error occur while writing");
             f.sync_all().expect("an error occur while sync(ing) data");
         }
     }
 }
 
-fn remove_quotes(text: String) -> String { text[1..text.len() - 1].to_string() }
+fn remove_quotes(text: &str) -> String { text[1..text.len() - 1].to_string() }
