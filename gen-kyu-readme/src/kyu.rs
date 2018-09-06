@@ -29,11 +29,12 @@ impl<'a> Kyu<'a> {
         use select::document::Document;
         use select::predicate::{Predicate, Class, Name};
 
-        let text = get(self.address)
-            .expect("an error occur while downloading")
-            .text()
-            .unwrap();
-        let document = Document::from(text.as_str());
+        let document = Document::from(
+            get(self.address)
+                .expect("an error occur while downloading")
+                .text()
+                .unwrap().as_str()
+        );
 
         self.rank = document.find(Class(
             "inner-small-hex"
@@ -52,26 +53,30 @@ impl<'a> Kyu<'a> {
             .as_str();
 
         let mut data = document.find(Name("script"));
-        for _ in 0..8 { data.next(); }
-        let text = data.next()
-            .unwrap()
-            .text();
-
         let v: Value = from_str(
             Regex::new(r"App\.data = (.+)\nApp\.routes")
                 .unwrap()
-                .captures(&text)
-                .unwrap()
+                .captures(
+                    &(0..9).fold(None, |_, _| data.next())
+                        .unwrap()
+                        .text()
+                ).unwrap()
                 .get(1)
                 .unwrap()
                 .as_str()
         ).unwrap();
 
-        let name = v["challengeName"].as_str().unwrap();
-        self.name = remove_quotes(name);
+        self.name = remove_quotes(
+            v["challengeName"]
+                .as_str()
+                .unwrap()
+        );
 
-        let description = v["description"].as_str().unwrap();
-        self.description = remove_quotes(description);
+        self.description = remove_quotes(
+            v["description"]
+                .as_str()
+                .unwrap()
+        );
     }
 
     fn write(&self) {
