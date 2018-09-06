@@ -2,7 +2,7 @@ pub struct Kyu<'a> {
     address: &'a str,
     name: String,
     rank: String,
-    project: &'a str,
+    project: String,
     description: String,
 }
 
@@ -12,7 +12,7 @@ impl<'a> Kyu<'a> {
             address,
             name: String::new(),
             rank: String::new(),
-            project: "",
+            project: String::new(),
             description: String::new(),
         }
     }
@@ -44,14 +44,6 @@ impl<'a> Kyu<'a> {
             .unwrap()
             .text();
 
-        self.project = Regex::new(r"kata/(.+)/train")
-            .unwrap()
-            .captures(&self.address)
-            .unwrap()
-            .get(1)
-            .unwrap()
-            .as_str();
-
         let mut data = document.find(Name("script"));
         let v: Value = from_str(
             Regex::new(r"App\.data = (.+)\nApp\.routes")
@@ -66,17 +58,24 @@ impl<'a> Kyu<'a> {
                 .as_str()
         ).unwrap();
 
-        self.name = remove_quotes(
-            v["challengeName"]
-                .as_str()
-                .unwrap()
-        );
+        self.name = v["challengeName"]
+            .as_str()
+            .unwrap()
+            .to_string();
 
-        self.description = format_desc(&remove_quotes(
+        self.project = self.name
+            .chars()
+            .flat_map(|c| match c {
+                ' ' => '-'.to_lowercase(),
+                _ => c.to_lowercase()
+            })
+            .collect();
+
+        self.description = format_desc(
             v["description"]
                 .as_str()
                 .unwrap()
-        ));
+        );
     }
 
     fn write(&self) {
@@ -112,8 +111,6 @@ impl<'a> Kyu<'a> {
         }
     }
 }
-
-fn remove_quotes(text: &str) -> String { text[1..text.len() - 1].to_string() }
 
 fn format_desc(text: &str) -> String {
     let mut desc = String::new();
