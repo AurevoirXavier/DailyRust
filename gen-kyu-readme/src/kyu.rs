@@ -58,7 +58,7 @@ impl<'a> Kyu<'a> {
                 .unwrap()
                 .captures(
                     &(0..9).fold(None, |_, _| data.next())
-                        .unwrap()
+                        .expect("failed to parse, since the site updated")
                         .text()
                 ).unwrap()
                 .get(1)
@@ -72,11 +72,11 @@ impl<'a> Kyu<'a> {
                 .unwrap()
         );
 
-        self.description = remove_quotes(
+        self.description = format_desc(&remove_quotes(
             v["description"]
                 .as_str()
                 .unwrap()
-        );
+        ));
     }
 
     fn write(&self) {
@@ -105,10 +105,23 @@ impl<'a> Kyu<'a> {
             use std::fs::File;
             use std::io::prelude::*;
             let mut f = File::create("README.md").expect("failed to create README");
+            f.write(format!("## Detail\n[{}]({})\n", self.name, self.address).as_bytes()).expect("an error occur while writing");
             f.write_all(self.description.as_bytes()).expect("an error occur while writing");
+            f.write(b"## Thinking\n").expect("an error occur while writing");
             f.sync_all().expect("an error occur while sync(ing) data");
         }
     }
 }
 
 fn remove_quotes(text: &str) -> String { text[1..text.len() - 1].to_string() }
+
+fn format_desc(text: &str) -> String {
+    let mut desc = String::new();
+
+    for line in text.lines() {
+        if line.starts_with("#") { desc += "\\"; }
+        desc += &format!("{}\n", line);
+    }
+
+    desc
+}
