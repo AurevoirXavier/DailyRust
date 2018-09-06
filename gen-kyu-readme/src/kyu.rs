@@ -1,6 +1,5 @@
-#[derive(Debug)]
 pub struct Kyu {
-    address: String,
+    address: &str,
     name: String,
     project: String,
     path: String,
@@ -69,13 +68,11 @@ impl Kyu {
         ).unwrap();
 
         let name = v["challengeName"].to_string();
-        self.name = Kyu::remove_quotes(name);
+        self.name = remove_quotes(name);
 
         let description = v["description"].to_string();
-        self.description = Kyu::remove_quotes(description);
+        self.description = remove_quotes(description);
     }
-
-    fn remove_quotes(text: String) -> String { text[1..text.len() - 1].to_string() }
 
     fn write(&self) {
         {
@@ -88,8 +85,6 @@ impl Kyu {
             use std::path::Path;
             set_current_dir(Path::new(&self.path)).expect("failed to change work dir");
         }
-
-        println!("{:?}", self);
 
         {
             use std::process::Command;
@@ -108,3 +103,5 @@ impl Kyu {
         }
     }
 }
+
+fn remove_quotes(text: String) -> String { text[1..text.len() - 1].to_string() }
