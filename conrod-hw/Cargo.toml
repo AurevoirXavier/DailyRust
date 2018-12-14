@@ -6,4 +6,5 @@ edition = "2018"
 
 [dependencies]
 conrod = { version = "0.55.0", features = ["glium", "winit"] }
-find_folder = "*"
+rand = "*"
+ttf-noto-sans = "*"

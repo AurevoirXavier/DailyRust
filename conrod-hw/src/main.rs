@@ -1,43 +1,91 @@
 #[macro_use]
 extern crate conrod;
-extern crate find_folder;
+extern crate rand;
+extern crate ttf_noto_sans;
 
-use conrod::{widget, Positionable, Colorable, Widget};
-use conrod::backend::glium::glium::{self, Surface};
+// --- std ---
+use std::{
+    sync::{Arc, Mutex},
+    thread,
+    time::{Duration, Instant},
+};
+
+// --- external ---
+use conrod::{
+    Borderable,
+    Colorable,
+    Labelable,
+    Positionable,
+    Sizeable,
+    Widget,
+    backend::glium::glium::{self, Surface, glutin},
+    text::FontCollection,
+    widget,
+};
+
+struct EventLoop {
+    last_update: Instant,
+    ui_needs_update: bool,
+}
+
+impl EventLoop {
+    fn new() -> EventLoop {
+        EventLoop {
+            last_update: Instant::now(),
+            ui_needs_update: true,
+        }
+    }
+
+    fn next(&mut self, events_loop: &mut glutin::EventsLoop) -> Vec<glutin::Event> {
+        let last_update = self.last_update;
+        let sixteen_ms = Duration::from_millis(16);
+        let duration_since_last_update = Instant::now().duration_since(last_update);
+        if duration_since_last_update < sixteen_ms { thread::sleep(sixteen_ms - duration_since_last_update); }
+
+        let mut events = vec![];
+        events_loop.poll_events(|event| events.push(event));
+//        if events.is_empty() && !self.ui_needs_update {
+//            events_loop.run_forever(|event| {
+//                events.push(event);
+//                glutin::ControlFlow::Break
+//            });
+//        }
+
+        self.ui_needs_update = false;
+        self.last_update = Instant::now();
+
+        events
+    }
+
+    fn needs_update(&mut self) { self.ui_needs_update = true; }
+}
 
 fn main() {
     const WIDTH: u32 = 400;
     const HEIGHT: u32 = 200;
 
-    let mut events_loop = glium::glutin::EventsLoop::new();
-    let window_builder = glium::glutin::WindowBuilder::new()
-        .with_title("Hello Conrod")
+    let mut events_loop = glutin::EventsLoop::new();
+    let window_builder = glutin::WindowBuilder::new()
+        .with_title("AMD YES!")
         .with_dimensions(WIDTH, HEIGHT);
-    let context_builder = glium::glutin::ContextBuilder::new()
+    let context_builder = glutin::ContextBuilder::new()
         .with_vsync(true)
         .with_multisampling(4);
     let display = glium::Display::new(window_builder, context_builder, &events_loop).unwrap();
 
     let mut ui = conrod::UiBuilder::new([WIDTH as f64, HEIGHT as f64]).build();
 
-    {
-        let assets = find_folder::Search::KidsThenParents(3, 5)
-            .for_folder("assets")
-            .unwrap();
-        let font_path = assets.join("fonts/Aurevoir-Regular.ttf");
-        ui.fonts.insert_from_file(font_path).unwrap();
-    }
+    ui.fonts.insert(
+        FontCollection::from_bytes(ttf_noto_sans::REGULAR)
+            .into_font()
+            .unwrap()
+    );
 
-    {
-        widget_ids!(struct Ids { text });
-        let ids = Ids::new(ui.widget_id_generator());
-        let ui = &mut ui.set_widgets();
-        widget::Text::new("Hello World!")
-            .middle_of(ui.window)
-            .color(conrod::color::WHITE)
-            .font_size(32)
-            .set(ids.text, ui);
-    }
+    widget_ids!(struct Ids { text, btn, auto_btn });
+    let text_i = Arc::new(Mutex::new(1u32));
+    let text_color = Arc::new(Mutex::new(conrod::color::BLACK));
+    let mut btn_color = conrod::color::BLACK;
+    let ids = Ids::new(ui.widget_id_generator());
 
     let image_map = conrod::image::Map::<glium::texture::Texture2d>::new();
     let mut renderer = conrod::backend::glium::Renderer::new(&display).unwrap();
@@ -51,10 +99,10 @@ fn main() {
             }
 
             match event {
-                glium::glutin::Event::WindowEvent { event, .. } => match event {
-                    glium::glutin::WindowEvent::KeyboardInput {
-                        input: glium::glutin::KeyboardInput {
-                            virtual_keycode: Some(glium::glutin::VirtualKeyCode::Escape),
+                glutin::Event::WindowEvent { event, .. } => match event {
+                    glutin::WindowEvent::KeyboardInput {
+                        input: glutin::KeyboardInput {
+                            virtual_keycode: Some(glutin::VirtualKeyCode::Escape),
                             ..
                         },
                         ..
@@ -65,49 +113,66 @@ fn main() {
             }
         }
 
+        {
+            let ui = &mut ui.set_widgets();
+
+            widget::Text::new(&format!("AMD YES! +{}", text_i.lock().unwrap()))
+                .mid_bottom_with_margin_on(ids.btn, 40.)
+                .color(*text_color.lock().unwrap())
+                .font_size(32)
+                .set(ids.text, ui);
+
+            if widget::Button::new()
+                .label("YES!")
+                .label_font_size(32)
+                .label_y(conrod::position::Relative::Scalar(2.5))
+                .w(60.)
+                .h(20.)
+                .middle_of(ui.window)
+                .border(0.)
+                .color(conrod::color::WHITE)
+                .label_color(btn_color)
+                .press_color(conrod::color::WHITE)
+                .hover_color(conrod::color::WHITE)
+                .set(ids.btn, ui)
+                .was_clicked() {
+                *text_i.lock().unwrap() += 1;
+                *text_color.lock().unwrap() = conrod::color::rgb(rand::random(), rand::random(), rand::random());
+                btn_color = conrod::color::rgb(rand::random(), rand::random(), rand::random());
+            }
+
+            if widget::Button::new()
+                .label("AUTO YES!")
+                .label_font_size(32)
+                .label_y(conrod::position::Relative::Scalar(2.5))
+                .w(60.)
+                .h(20.)
+                .mid_top_with_margin_on(ids.btn, 40.)
+                .border(0.)
+                .color(conrod::color::WHITE)
+                .label_color(btn_color)
+                .press_color(conrod::color::WHITE)
+                .hover_color(conrod::color::WHITE)
+                .set(ids.auto_btn, ui)
+                .was_clicked() {
+                let text_i = Arc::clone(&text_i);
+                let text_color = Arc::clone(&text_color);
+                thread::spawn(move || {
+                    loop {
+                        *text_i.lock().unwrap() += 1;
+                        *text_color.lock().unwrap() = conrod::color::rgb(rand::random(), rand::random(), rand::random());
+                        thread::sleep(Duration::from_millis(100));
+                    }
+                });
+            }
+        }
+
         if let Some(primitives) = ui.draw_if_changed() {
             renderer.fill(&display, primitives, &image_map);
             let mut target = display.draw();
-            target.clear_color(0.5, 0.3, 0.1, 1.);
+            target.clear_color(1., 1., 1., 1.);
             renderer.draw(&display, &mut target, &image_map).unwrap();
             target.finish().unwrap();
         }
     }
-}
-
-struct EventLoop {
-    last_update: std::time::Instant,
-    ui_needs_update: bool,
-}
-
-impl EventLoop {
-    fn new() -> EventLoop {
-        EventLoop {
-            last_update: std::time::Instant::now(),
-            ui_needs_update: true,
-        }
-    }
-
-    fn next(&mut self, events_loop: &mut glium::glutin::EventsLoop) -> Vec<glium::glutin::Event> {
-        let last_update = self.last_update;
-        let sixteen_ms = std::time::Duration::from_millis(16);
-        let duration_since_last_update = std::time::Instant::now().duration_since(last_update);
-        if duration_since_last_update < sixteen_ms { std::thread::sleep(sixteen_ms - duration_since_last_update); }
-
-        let mut events = vec![];
-        events_loop.poll_events(|event| events.push(event));
-        if events.is_empty() && !self.ui_needs_update {
-            events_loop.run_forever(|event| {
-                events.push(event);
-                glium::glutin::ControlFlow::Break
-            });
-        }
-
-        self.ui_needs_update = false;
-        self.last_update = std::time::Instant::now();
-
-        events
-    }
-
-    fn needs_update(&mut self) { self.ui_needs_update = true; }
 }
