@@ -19,6 +19,8 @@ use conrod::{
     Sizeable,
     Widget,
     backend::glium::glium::{self, Surface, glutin},
+    color,
+    position,
     text::FontCollection,
     widget,
 };
@@ -44,12 +46,12 @@ impl EventLoop {
 
         let mut events = vec![];
         events_loop.poll_events(|event| events.push(event));
-//        if events.is_empty() && !self.ui_needs_update {
-//            events_loop.run_forever(|event| {
-//                events.push(event);
-//                glutin::ControlFlow::Break
-//            });
-//        }
+        if events.is_empty() && !self.ui_needs_update {
+            events_loop.run_forever(|event| {
+                events.push(event);
+                glutin::ControlFlow::Break
+            });
+        }
 
         self.ui_needs_update = false;
         self.last_update = Instant::now();
@@ -61,7 +63,7 @@ impl EventLoop {
 }
 
 fn main() {
-    const WIDTH: u32 = 400;
+    const WIDTH: u32 = 600;
     const HEIGHT: u32 = 200;
 
     let mut events_loop = glutin::EventsLoop::new();
@@ -83,8 +85,8 @@ fn main() {
 
     widget_ids!(struct Ids { text, btn, auto_btn });
     let text_i = Arc::new(Mutex::new(1u32));
-    let text_color = Arc::new(Mutex::new(conrod::color::BLACK));
-    let mut btn_color = conrod::color::BLACK;
+    let text_color = Arc::new(Mutex::new(color::BLACK));
+    let mut btn_color = color::BLACK;
     let ids = Ids::new(ui.widget_id_generator());
 
     let image_map = conrod::image::Map::<glium::texture::Texture2d>::new();
@@ -125,34 +127,32 @@ fn main() {
             if widget::Button::new()
                 .label("YES!")
                 .label_font_size(32)
-                .label_y(conrod::position::Relative::Scalar(2.5))
-                .w(60.)
-                .h(20.)
+                .label_y(position::Relative::Scalar(2.5))
+                .w_h(60., 20.)
                 .middle_of(ui.window)
                 .border(0.)
-                .color(conrod::color::WHITE)
+                .color(color::WHITE)
                 .label_color(btn_color)
-                .press_color(conrod::color::WHITE)
-                .hover_color(conrod::color::WHITE)
+                .press_color(color::WHITE)
+                .hover_color(color::WHITE)
                 .set(ids.btn, ui)
                 .was_clicked() {
                 *text_i.lock().unwrap() += 1;
-                *text_color.lock().unwrap() = conrod::color::rgb(rand::random(), rand::random(), rand::random());
-                btn_color = conrod::color::rgb(rand::random(), rand::random(), rand::random());
+                *text_color.lock().unwrap() = color::rgb(rand::random(), rand::random(), rand::random());
+                btn_color = color::rgb(rand::random(), rand::random(), rand::random());
             }
 
             if widget::Button::new()
                 .label("AUTO YES!")
                 .label_font_size(32)
-                .label_y(conrod::position::Relative::Scalar(2.5))
-                .w(60.)
-                .h(20.)
+                .label_y(position::Relative::Scalar(2.5))
+                .w_h(60., 20.)
                 .mid_top_with_margin_on(ids.btn, 40.)
                 .border(0.)
-                .color(conrod::color::WHITE)
+                .color(color::WHITE)
                 .label_color(btn_color)
-                .press_color(conrod::color::WHITE)
-                .hover_color(conrod::color::WHITE)
+                .press_color(color::WHITE)
+                .hover_color(color::WHITE)
                 .set(ids.auto_btn, ui)
                 .was_clicked() {
                 let text_i = Arc::clone(&text_i);
@@ -160,7 +160,7 @@ fn main() {
                 thread::spawn(move || {
                     loop {
                         *text_i.lock().unwrap() += 1;
-                        *text_color.lock().unwrap() = conrod::color::rgb(rand::random(), rand::random(), rand::random());
+                        *text_color.lock().unwrap() = color::rgb(rand::random(), rand::random(), rand::random());
                         thread::sleep(Duration::from_millis(100));
                     }
                 });
